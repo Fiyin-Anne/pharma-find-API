@@ -23,7 +23,8 @@ const PharmacyProfileSchema = new Schema({
   },
   verification_status: {
     type: String,
-    default: "User"
+    default: "pending",
+    enum: ["pending", "success", "expired"],
   },
   inventory_id: {
     type: String,
