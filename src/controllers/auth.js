@@ -17,7 +17,6 @@ export default class Auth {
       } = req.body;
 
       const { error } = registrationValidation(req.body);
-      console.log(error);
       if (error) return res.status(400).json({ status: 400, message: "Validation error", error: error.message });
       const existingUser = await User.findOne({ username });
       if (existingUser) {
