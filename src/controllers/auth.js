@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import userServices from "../services/user";
 import jwtHelper from "../helpers/jwt";
 import User from "../models/user";
+import { registrationValidation } from "../validations/authValidation";
 
 export default class Auth {
   static async createUser(req, res) {
@@ -15,6 +16,9 @@ export default class Auth {
         verify_password
       } = req.body;
 
+      const { error } = registrationValidation(req.body);
+      console.log(error);
+      if (error) return res.status(400).json({ status: 400, message: "Validation error", error: error.message });
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res.status(409).json({
