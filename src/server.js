@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import dotenv from "dotenv";
 
+import userRoutes from "./routes/user";
+
 require("./helpers/database/db");
 
 dotenv.config();
@@ -24,6 +26,7 @@ app.get("/", (request, response) => {
   });
 });
 
+app.use("/api/user/", userRoutes);
 app.use((request, response, next) => {
   next(createError.NotFound());
 });
