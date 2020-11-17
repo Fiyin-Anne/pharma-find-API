@@ -21,10 +21,12 @@ const PharmacyProfileSchema = new Schema({
     type: String,
     required: true
   },
-  verification_status: {
-    type: String,
-    default: "pending",
-    enum: ["pending", "success", "expired"],
+  image: {
+    type: String
+  },
+  verified: {
+    type: Boolean,
+    default: false,
   },
   inventory_id: {
     type: String,
