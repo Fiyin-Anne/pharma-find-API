@@ -6,6 +6,7 @@ import createError from "http-errors";
 import dotenv from "dotenv";
 
 import userRoutes from "./routes/user";
+import profileRoutes from "./routes/profile";
 
 require("./helpers/database/db");
 
@@ -27,6 +28,8 @@ app.get("/", (request, response) => {
 });
 
 app.use("/api/user/", userRoutes);
+app.use("/api/user/", profileRoutes);
+
 app.use((request, response, next) => {
   next(createError.NotFound());
 });

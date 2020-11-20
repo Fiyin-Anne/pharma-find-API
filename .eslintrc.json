@@ -31,7 +31,9 @@
     "nonblock-statement-body-position": "off",
     "dot-notation": 0,
     "operator-linebreak": 0,
+    "space-infix-ops": 0,
     "no-useless-catch": "off",
+    "camelcase": 0,
     "no-use-before-define": ["error", { "functions": false, "classes": false }],
     "require-jsdoc": 0,
     "valid-jsdoc": "error"
