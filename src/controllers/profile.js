@@ -20,6 +20,7 @@ export default class pharmaProfile {
         company_email,
         company_address,
         company_phone_number,
+        user,
       } = req.body;
 
       // const data = {
@@ -97,6 +98,7 @@ export default class pharmaProfile {
             image: req.file.location,
             company_address,
             company_phone_number,
+            user,
           },
         },
         {
@@ -123,7 +125,12 @@ export default class pharmaProfile {
 
   static async getProfile(req, res) {
     try {
-      const profile = await PharmacyProfile.find({}).populate("user").exec();
+      const profile = await PharmacyProfile.find({})
+        .populate({
+          path: "user",
+          select: "username email phone_number",
+        })
+        .exec();
       res.json({
         success: true,
         profile,
