@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --exec babel-node  ./src/server.js",
     "lint": "eslint src/  --fix",
-    "clean": "rm -rf build && mkdir build",
+    "clean": "npm rm -rf build && npm run build-babel",
     "build-babel": "babel ./src --out-dir ./build",
     "build": "npm run clean && npm run build-babel",
     "start": "npm run build && node ./build/server.js",
