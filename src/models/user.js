@@ -11,6 +11,11 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  email_verified: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
   phone_number: {
     type: String,
     required: true
