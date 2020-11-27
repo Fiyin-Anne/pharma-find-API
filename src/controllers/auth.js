@@ -6,10 +6,11 @@ import User from "../models/user";
 import { registrationValidation } from "../validations/authValidation";
 import mail from "../services/sendgrid";
 import utils from "../helpers/utils";
+import { emailConfirmationTemplate } from "../views/template";
 
 const mongoose = require("mongoose");
 
-const { compileHtml, emailVerificationLink } = utils;
+const { emailVerificationLink } = utils;
 
 export default class Auth {
   static async createUser(req, res) {
@@ -64,10 +65,7 @@ export default class Auth {
         to: newUser.email,
         from: "PharmaFind <francisabonyi@gmail.com>",
         subject: "Welcome to PharmaFind!",
-        html: compileHtml("email_confirmation", {
-          username: newUser.username,
-          link: emailVerificationLink(token)
-        })
+        html: emailConfirmationTemplate(newUser.username, emailVerificationLink(token))
       });
 
       return res.status(201).json({ status: 201, message: `Registration successful. Hello, ${newUser.username}! Please verify your email.`, });
