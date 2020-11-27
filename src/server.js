@@ -6,8 +6,12 @@ import createError from "http-errors";
 import dotenv from "dotenv";
 
 import userRoutes from "./routes/user";
+import profileRoutes from "./routes/profile";
+import inventoryRoutes from "./routes/inventory";
 
 require("./helpers/database/db");
+
+global.__basedir = `${__dirname}/..`;
 
 dotenv.config();
 
@@ -27,13 +31,16 @@ app.get("/", (request, response) => {
 });
 
 app.use("/api/user/", userRoutes);
-app.use((request, response, next) => {
+app.use("/api/user/", profileRoutes);
+app.use("/api/user/", inventoryRoutes);
+
+app.use((req, res, next) => {
   next(createError.NotFound());
 });
 
-app.use((err, request, response, next) => {
-  response.status(err.status || 500);
-  response.send({
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send({
     error: {
       status: err.status || 500,
       message: err.message,
