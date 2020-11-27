@@ -4,6 +4,12 @@ import userServices from "../services/user";
 import jwtHelper from "../helpers/jwt";
 import User from "../models/user";
 import { registrationValidation } from "../validations/authValidation";
+import mail from "../services/sendgrid";
+import utils from "../helpers/utils";
+
+const mongoose = require("mongoose");
+
+const { compileHtml, emailVerificationLink } = utils;
 
 export default class Auth {
   static async createUser(req, res) {
@@ -53,7 +59,18 @@ export default class Auth {
         password: hashPassword
       };
       const newUser = await userServices.addUser(user);
-      return res.status(201).json({ status: 201, message: `Registration successful. Hello, ${newUser.username}!`, });
+      const token = await jwtHelper.generateToken(newUser.id);
+      await mail({
+        to: newUser.email,
+        from: "PharmaFind <francisabonyi@gmail.com>",
+        subject: "Welcome to PharmaFind!",
+        html: compileHtml("email_confirmation", {
+          username: newUser.username,
+          link: emailVerificationLink(token)
+        })
+      });
+
+      return res.status(201).json({ status: 201, message: `Registration successful. Hello, ${newUser.username}! Please verify your email.`, });
     } catch (error) {
       res.status(500).json({ status: 500, error: "Server Error" });
     }
@@ -69,6 +86,12 @@ export default class Auth {
           error: "This email is not associated with any account."
         });
       }
+      if (!existingUser.email_verified) {
+        return res.status(400).json({
+          status: 400,
+          error: "User email not verified."
+        });
+      }
       const validPassword = await bcrypt.compare(password, existingUser.password);
       if (!validPassword) {
         return res.status(401).json({
@@ -78,6 +101,20 @@ export default class Auth {
       }
       const token = await jwtHelper.generateToken({ existingUser });
       return res.status(200).json({ status: 200, message: `Hello ${existingUser.username}, welcome!`, token });
+    } catch (error) {
+      res.status(500).json({ status: 500, error: "Server Error" });
+    }
+  }
+
+  static async verifyEmail(req, res) {
+    const { token } = req.params;
+    try {
+      const payload = await jwtHelper.decodeToken(token);
+      const verifyUser = await User.findOneAndUpdate(
+        { _id: mongoose.Types.ObjectId(payload) }, { email_verified: true }, { new: true }
+      );
+      if (!verifyUser) return res.status(400).json({ status: 400, message: "Account no longer exists" });
+      return res.status(200).json({ status: 200, message: "User successfully verified!" });
     } catch (error) {
       res.status(500).json({ status: 500, error: "Server Error" });
     }
