@@ -3,22 +3,34 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const InventorySchema = new Schema({
-  pharmacy_id: {
+  user: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
   },
-  items: [
-    {
-      name: String,
-      quantity: Number,
-      price: Number,
-      nafdac_number: Number
-    }
-  ],
+  pharmacy: {
+    type: Schema.Types.ObjectId,
+    ref: "PharmacyProfile",
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    default: 1,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  nafdac_number: {
+    type: String,
+    required: true,
+  },
   modifiedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model("Inventory", InventorySchema);
+export default mongoose.model("Inventory", InventorySchema);
