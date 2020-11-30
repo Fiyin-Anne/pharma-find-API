@@ -68,7 +68,7 @@ export default class Auth {
         html: emailConfirmationTemplate(newUser.username, emailVerificationLink(token))
       });
 
-      return res.status(201).json({ status: 201, message: `Registration successful. Hello, ${newUser.username}! Please verify your email.`, });
+      return res.status(201).json({ status: 201, token, message: `Registration successful. Hello, ${newUser.username}! Please verify your email.`, });
     } catch (error) {
       res.status(500).json({ status: 500, error: "Server Error" });
     }
