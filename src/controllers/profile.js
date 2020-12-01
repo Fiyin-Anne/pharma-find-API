@@ -95,7 +95,7 @@ export default class pharmaProfile {
           $set: {
             company_name,
             company_email,
-            image: req.file.location,
+            image: req.file.path,
             company_address,
             company_phone_number,
             user,

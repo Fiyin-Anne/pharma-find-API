@@ -1,25 +1,32 @@
-import aws from "aws-sdk";
-import multer from "multer";
-import multerS3 from "multer-s3";
+const multer = require("multer");
 
-aws.config.update({
-  secretAccessKey: process.env.AWSSecretKey,
-  accessKeyId: process.env.AWSAccessKeyId,
+const storage = multer.diskStorage({
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+  },
+  destination: (req, file, cb) => {
+    cb(null, "./documents");
+  },
 });
-const s3 = new aws.S3();
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/png"
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("File type not accepted"), false);
+  }
+};
 
 const upload = multer({
-  storage: multerS3({
-    s3,
-    bucket: "pharma-find",
-    acl: "public-read",
-    metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: (req, file, cb) => {
-      cb(null, Date.now().toString());
-    },
-  }),
+  storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter,
 });
 
-export default upload;
+module.exports = upload;
