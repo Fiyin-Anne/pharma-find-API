@@ -17,6 +17,7 @@ dotenv.config();
 
 const app = express();
 
+app.use("/documents", express.static("documents"));
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
