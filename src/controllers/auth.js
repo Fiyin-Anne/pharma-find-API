@@ -70,7 +70,6 @@ export default class Auth {
         password: hashPassword,
       };
       const newUser = await userServices.addUser(user);
-      // const token = await jwtHelper.generateToken(newUser);
       const token = await jwtHelper.generateToken(newUser.id);
       await mail({
         to: newUser.email,
