@@ -13,4 +13,9 @@ export default class jwtHelper {
     const decoded = await jwt.decode(token);
     return decoded.payload;
   }
+
+  static async verifyToken(token) {
+    const verifyToken = await jwt.verify(token, secretKey);
+    return verifyToken;
+  }
 }
