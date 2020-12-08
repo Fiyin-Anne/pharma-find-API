@@ -7,10 +7,6 @@ import request from "request";
 import PharmacyProfile from "../models/pharmacy_profile";
 
 dotenv.config();
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${process.env.appruve}`,
-};
 
 export default class pharmaProfile {
   static async editProfile(req, res, next) {
@@ -22,36 +18,6 @@ export default class pharmaProfile {
         company_phone_number,
         user,
       } = req.body;
-
-      // const data = {
-      //   company_name,
-      // };
-
-      // set the headers
-      // const config = {
-      //   headers: {
-      //     "Content-Type": "application/x-www-form-urlencoded",
-      //     Authorization: `Bearer ${process.env.appruve}`,
-      //   },
-      // };
-      // await axios.post(
-      //   "https://api.appruve.co/v1/verifications/ng/cac",
-      //   qs.stringify(data),
-      //   config
-      // );
-
-      // request.post(
-      //   "https://api.appruve.co/v1/verifications/ng/cac",
-      //   {
-      //     headers,
-      //     data,
-      //   },
-      //   (error, response, body) => {
-      //     console.log("error", error);
-      //     console.log(`statusCode: ${response.statusCode}`);
-      //     console.log("body", body);
-      //   }
-      // );
 
       const companyName = await PharmacyProfile.findOne({ company_name });
       if (companyName) {
@@ -111,12 +77,9 @@ export default class pharmaProfile {
         message: "Profile updated successfully",
       });
     } catch (error) {
-      // console.log("error grace", error.response.statusText);
-      // console.log("error grace", error.response.data.message);
       if (error.response) {
         return res.status(404).json({
           message: error.message,
-          // message: error.response.data,
         });
       }
       next(error);

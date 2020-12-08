@@ -97,9 +97,10 @@ export default class Auth {
           error: "Incorrect password!"
         });
       }
-      const token = await jwtHelper.generateToken({ existingUser });
+      const token = await jwtHelper.generateToken(existingUser);
       return res.status(200).json({ status: 200, message: `Hello ${existingUser.username}, welcome!`, token });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ status: 500, error: "Server Error" });
     }
   }
@@ -108,12 +109,14 @@ export default class Auth {
     const { token } = req.params;
     try {
       const payload = await jwtHelper.decodeToken(token);
+      console.log(token);
       const verifyUser = await User.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(payload) }, { email_verified: true }, { new: true }
       );
       if (!verifyUser) return res.status(400).json({ status: 400, message: "Account no longer exists" });
       return res.status(200).json({ status: 200, message: "User successfully verified!" });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ status: 500, error: "Server Error" });
     }
   }
