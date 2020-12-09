@@ -11,12 +11,13 @@ dotenv.config();
 export default class pharmaProfile {
   static async editProfile(req, res, next) {
     try {
+      const { id } = req.decoded;
+
       const {
         company_name,
         company_email,
         company_address,
         company_phone_number,
-        user,
       } = req.body;
 
       const companyName = await PharmacyProfile.findOne({ company_name });
@@ -55,21 +56,15 @@ export default class pharmaProfile {
       }
       await PharmacyProfile.findOneAndUpdate(
         {
-          _id: req.params.id,
+          _id: id
         },
         {
-          $set: {
             company_name,
             company_email,
             image: req.file.path,
             company_address,
             company_phone_number,
-            user,
-          },
         },
-        {
-          upsert: true,
-        }
       );
 
       return res.status(200).json({

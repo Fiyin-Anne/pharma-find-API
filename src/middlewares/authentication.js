@@ -1,8 +1,6 @@
-// check token
-// check id
-
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import User from "../models/user";
 
 dotenv.config();
 export default class Authentication {
@@ -29,7 +27,6 @@ export default class Authentication {
   static async verifyrole(req, res, next) {
     try {
       const { role } = req.decoded;
-      // const user = await Authentication.findAdminById(id);
       if (role === "Pharmacy Admin") {
         return next();
       }
