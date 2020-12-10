@@ -5,91 +5,59 @@ import qs from "querystring";
 
 import request from "request";
 import PharmacyProfile from "../models/pharmacy_profile";
+import User from "../models/user";
 
 dotenv.config();
 
 export default class pharmaProfile {
-  static async editProfile(req, res, next) {
+  static async editProfile(req, res) {
     try {
       const { id } = req.decoded;
 
-      const {
-        company_name,
-        company_email,
-        company_address,
-        company_phone_number,
-      } = req.body;
-
-      const companyName = await PharmacyProfile.findOne({ company_name });
-      if (companyName) {
-        return res.status(409).json({
-          status: 409,
-          error:
-            "oopss! Company name is already associated with another account.",
-        });
-      }
-      const companyEmail = await PharmacyProfile.findOne({ company_email });
-      if (companyEmail) {
-        return res.status(409).json({
-          status: 409,
-          error:
-            "oopss! Company email is already associated with another account.",
-        });
-      }
-      const companyNumber = await PharmacyProfile.findOne({
-        company_phone_number,
-      });
-      if (companyNumber) {
-        return res.status(409).json({
-          status: 409,
-          error:
-            "oopss! Company phone number is already associated with another account.",
-        });
-      }
-      const companyAddress = await PharmacyProfile.findOne({ company_address });
-      if (companyAddress) {
-        return res.status(409).json({
-          status: 409,
-          error:
-            "oopss! Company address is already associated with another account.",
-        });
-      }
-      await PharmacyProfile.findOneAndUpdate(
+      const { email, phone_number } = req.body;
+      const profile = await User.findOneAndUpdate(
         {
-          _id: id
+          _id: id,
         },
         {
-            company_name,
-            company_email,
-            image: req.file.path,
-            company_address,
-            company_phone_number,
+          $set: {
+            email,
+            phone_number,
+          },
         },
+        {
+          upsert: true,
+        }
       );
-
+      delete profile.password;
+      const data = {
+        role: profile.role,
+        _id: profile._id,
+        username: profile.username,
+        email: profile.email,
+        phone_number: profile.phone_number,
+      };
       return res.status(200).json({
         success: 200,
         message: "Profile updated successfully",
+        data,
       });
     } catch (error) {
-      if (error.response) {
+      console.log(error);
+      if (error) {
         return res.status(404).json({
           message: error.message,
         });
       }
-      next(error);
     }
   }
 
   static async getProfile(req, res) {
     try {
-      const profile = await PharmacyProfile.find({})
-        .populate({
-          path: "user",
-          select: "username email phone_number",
-        })
-        .exec();
+      const profile = await User.find({});
+
       res.json({
+        users: profile.length,
         success: true,
         profile,
       });

@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const PharmacyProfileSchema = new Schema(
   {
-    user_id: { 
-      type: Schema.Types.ObjectId, 
-      ref: "User"
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     company_name: {
       type: String,

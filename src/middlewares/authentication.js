@@ -9,11 +9,13 @@ export default class Authentication {
       const { authorization } = req.headers;
       let decoded;
       if (authorization) {
-        const token = authorization.split(" ")[1];
         try {
-          decoded = jwt.verify(token, process.env.JWT_KEY);
+          decoded = jwt.verify(authorization, process.env.JWT_KEY);
         } catch (error) {
-          return res.status(410).send({ status: 410, error: "Please sign in again." });
+          console.log("error", error);
+          return res
+            .status(410)
+            .send({ status: 410, error: "Please sign in again." });
         }
         req.decoded = decoded;
         return next();

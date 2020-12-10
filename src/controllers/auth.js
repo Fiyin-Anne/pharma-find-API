@@ -75,8 +75,8 @@ export default class Auth {
         user_id: newUser._id,
         company_name: newUser.username,
         company_email: newUser.email,
-        company_phone_number: newUser.phone_number
-      }).save()
+        company_phone_number: newUser.phone_number,
+      }).save();
       const token = await jwtHelper.generateToken(newUser);
       await mail({
         to: newUser.email,
@@ -126,7 +126,13 @@ export default class Auth {
       }
 
       const token = await jwtHelper.generateToken(existingUser);
-      return res.status(200).json({ status: 200, message: `Hello ${existingUser.username}, welcome!`, token });
+      return res
+        .status(200)
+        .json({
+          status: 200,
+          message: `Hello ${existingUser.username}, welcome!`,
+          token,
+        });
     } catch (error) {
       res.status(500).json({ status: 500, error: "Server Error" });
     }
@@ -137,7 +143,9 @@ export default class Auth {
     try {
       const payload = await jwtHelper.decodeToken(token);
       const verifyUser = await User.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(payload.id) }, { email_verified: true }, { new: true }
+        { _id: mongoose.Types.ObjectId(payload.id) },
+        { email_verified: true },
+        { new: true }
       );
       if (!verifyUser) {
         return res
