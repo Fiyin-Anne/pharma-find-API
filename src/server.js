@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user";
 import profileRoutes from "./routes/profile";
 import inventoryRoutes from "./routes/inventory";
+import galleryRoutes from "./routes/gallery";
 
 require("./helpers/database/db");
 
@@ -34,6 +35,7 @@ app.get("/", (request, response) => {
 app.use("/api/user/", userRoutes);
 app.use("/api/user/", profileRoutes);
 app.use("/api/user/", inventoryRoutes);
+app.use("/api/user/", galleryRoutes);
 
 app.use((req, res, next) => {
   next(createError.NotFound());
