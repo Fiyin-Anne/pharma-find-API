@@ -12,13 +12,12 @@ dotenv.config();
 export default class pharmaProfile {
   static async editProfile(req, res) {
     try {
-      const { id } = req.decoded;
+      const { _id } = req.decoded;
 
       const { email, phone_number } = req.body;
       const profile = await User.findOneAndUpdate(
-        {
-          _id: id,
-        },
+        _id,
+
         {
           $set: {
             email,

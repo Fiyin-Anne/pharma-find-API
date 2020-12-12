@@ -134,7 +134,7 @@ export default class Auth {
           token,
         });
     } catch (error) {
-      res.status(500).json({ status: 500, error: "Server Error" });
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 
@@ -142,8 +142,9 @@ export default class Auth {
     const { token } = req.params;
     try {
       const payload = await jwtHelper.decodeToken(token);
+
       const verifyUser = await User.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(payload.id) },
+        { _id: mongoose.Types.ObjectId(payload._id) },
         { email_verified: true },
         { new: true }
       );
@@ -156,7 +157,7 @@ export default class Auth {
         .status(200)
         .json({ status: 200, message: "User successfully verified!" });
     } catch (error) {
-      res.status(500).json({ status: 500, error: "Server Error" });
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 

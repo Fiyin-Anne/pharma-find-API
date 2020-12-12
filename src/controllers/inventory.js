@@ -36,7 +36,6 @@ export default class inventoryController {
         message: `Uploaded the file successfully: ${req.file.originalname}`,
       });
     } catch (error) {
-      console.log(error);
       res.status(500).send({
         message: `Could not upload the file: ${req.file.originalname}`,
       });
@@ -51,7 +50,7 @@ export default class inventoryController {
       const search = name
         ? { name: { $regex: new RegExp(name), $options: "i" } }
         : {};
-      console.log("serch", search);
+      console.log("search", search);
       const count = await Inventory.countDocuments();
       const totalPages = Math.ceil(count / limit);
       page = page > totalPages ? totalPages : page;
