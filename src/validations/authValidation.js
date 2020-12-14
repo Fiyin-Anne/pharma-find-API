@@ -9,7 +9,6 @@ const registrationValidation = (user) => {
       .empty()
       .messages({
         "any.required": "Username is required",
-        "string.alphanum": "Username must contain only alphanumeric characters",
         "string.base": "Username must be a string",
         "string.empty": "username cannot be an empty field",
         "string.min": "Username is too short"

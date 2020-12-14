@@ -4,6 +4,7 @@ import userServices from "../services/user";
 import jwtHelper from "../helpers/jwt";
 import bcryptHelper from "../helpers/bcrypt";
 import User from "../models/user";
+import PharmacyProfile from "../models/pharmacy_profile";
 import { registrationValidation } from "../validations/authValidation";
 import mail from "../services/sendgrid";
 import utils from "../helpers/utils";
@@ -70,7 +71,13 @@ export default class Auth {
         password: hashPassword,
       };
       const newUser = await userServices.addUser(user);
-      const token = await jwtHelper.generateToken(newUser.id);
+      await new PharmacyProfile({
+        user_id: newUser._id,
+        company_name: newUser.username,
+        company_email: newUser.email,
+        company_phone_number: newUser.phone_number,
+      }).save();
+      const token = await jwtHelper.generateToken(newUser);
       await mail({
         to: newUser.email,
         from: "PharmaFind <francisabonyi@gmail.com>",
@@ -117,14 +124,17 @@ export default class Auth {
           error: "Incorrect password!",
         });
       }
-      const token = await jwtHelper.generateToken({ existingUser });
-      return res.status(200).json({
-        status: 200,
-        message: `Hello ${existingUser.username}, welcome!`,
-        token,
-      });
+
+      const token = await jwtHelper.generateToken(existingUser);
+      return res
+        .status(200)
+        .json({
+          status: 200,
+          message: `Hello ${existingUser.username}, welcome!`,
+          token,
+        });
     } catch (error) {
-      res.status(500).json({ status: 500, error: "Server Error" });
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 
@@ -132,8 +142,9 @@ export default class Auth {
     const { token } = req.params;
     try {
       const payload = await jwtHelper.decodeToken(token);
+
       const verifyUser = await User.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(payload) },
+        { _id: mongoose.Types.ObjectId(payload._id) },
         { email_verified: true },
         { new: true }
       );
@@ -146,7 +157,7 @@ export default class Auth {
         .status(200)
         .json({ status: 200, message: "User successfully verified!" });
     } catch (error) {
-      res.status(500).json({ status: 500, error: "Server Error" });
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 

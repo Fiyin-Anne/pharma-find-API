@@ -26,7 +26,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    default: "User",
+    default: "Pharmacy Admin",
     enum: ["User", "Pharmacy Admin", "Admin"],
   },
 }, { timestamps: true });

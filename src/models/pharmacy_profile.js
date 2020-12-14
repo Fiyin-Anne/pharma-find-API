@@ -4,7 +4,10 @@ const { Schema } = mongoose;
 
 const PharmacyProfileSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     company_name: {
       type: String,
       required: true,
@@ -17,7 +20,6 @@ const PharmacyProfileSchema = new Schema(
     },
     company_address: {
       type: String,
-      required: true,
     },
     company_phone_number: {
       type: String,
@@ -29,10 +31,6 @@ const PharmacyProfileSchema = new Schema(
     verified: {
       type: Boolean,
       default: false,
-    },
-    inventory_id: {
-      type: String,
-      default: "User",
     },
   },
   { timestamps: true }
