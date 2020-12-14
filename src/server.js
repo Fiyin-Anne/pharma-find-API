@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import dotenv from "dotenv";
-
+import verificationRoute from "./routes/verification";
 import userRoutes from "./routes/user";
 import profileRoutes from "./routes/profile";
 import inventoryRoutes from "./routes/inventory";
@@ -34,6 +34,7 @@ app.get("/", (request, response) => {
 app.use("/api/user/", userRoutes);
 app.use("/api/user/", profileRoutes);
 app.use("/api/user/", inventoryRoutes);
+app.use("/", verificationRoute);
 
 app.use((req, res, next) => {
   next(createError.NotFound());
