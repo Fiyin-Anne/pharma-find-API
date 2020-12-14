@@ -153,9 +153,7 @@ export default class Auth {
           .status(400)
           .json({ status: 400, message: "Account no longer exists" });
       }
-      return res
-        .status(200)
-        .json({ status: 200, message: "User successfully verified!" });
+      return res.redirect(`${process.env.HOST_URL}/login`);
     } catch (error) {
       res.status(500).json({ status: 500, error: error.message });
     }
