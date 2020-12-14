@@ -11,6 +11,8 @@ import utils from "../helpers/utils";
 import { emailConfirmationTemplate } from "../views/template";
 import { passwordResetTemplate } from "../views/forgetpassword";
 
+import "dotenv/config";
+
 const mongoose = require("mongoose");
 
 const { emailVerificationLink, forgetPasswordLink } = utils;
