@@ -11,6 +11,8 @@ import utils from "../helpers/utils";
 import { emailConfirmationTemplate } from "../views/template";
 import { passwordResetTemplate } from "../views/forgetpassword";
 
+import "dotenv/config";
+
 const mongoose = require("mongoose");
 
 const { emailVerificationLink, forgetPasswordLink } = utils;
@@ -153,9 +155,7 @@ export default class Auth {
           .status(400)
           .json({ status: 400, message: "Account no longer exists" });
       }
-      return res
-        .status(200)
-        .json({ status: 200, message: "User successfully verified!" });
+      return res.redirect(`${process.env.HOST_URL}/login`);
     } catch (error) {
       res.status(500).json({ status: 500, error: error.message });
     }
