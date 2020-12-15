@@ -3,7 +3,6 @@ import Joi from "joi";
 const registrationValidation = (user) => {
   const schema = Joi.object({
     username: Joi.string()
-      .alphanum()
       .min(3)
       .required()
       .empty()
