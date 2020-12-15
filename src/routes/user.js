@@ -5,9 +5,9 @@ import UserController from "../controllers/auth";
 const {
   createUser,
   userLogin,
-  verifyEmail,
   forgetPassword,
   resendEmailConfirm,
+  verifyEmail,
   passwordReset,
 } = UserController;
 const router = express.Router();
