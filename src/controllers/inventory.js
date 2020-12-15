@@ -1,7 +1,49 @@
 import readXlsxFile from "read-excel-file/node";
 import Inventory from "../models/inventory";
+import PharmacyProfile from "../models/pharmacy_profile";
 
 export default class inventoryController {
+  static async addInventory(req, res) {
+    console.log(req.decoded);
+    try {
+      // eslint-disable-next-line object-curly-newline
+      const { name, quantity, price, nafdac_number } = req.body;
+
+      const productsNameExist = await Inventory.findOne({ name });
+      if (productsNameExist) {
+        return res.status(400).json({
+          message: `Inventory name ${name} already exists`,
+        });
+      }
+      const productsNafdacExist = await Inventory.findOne({ nafdac_number });
+      if (productsNafdacExist) {
+        return res.status(400).json({
+          message: `nafdac number ${productsNafdacExist.nafdac_number} already exists`,
+        });
+      }
+      const pharma = await PharmacyProfile.findOne({ user: req.decoded._id });
+      console.log("pharma", pharma);
+
+      const inventory = await new Inventory({
+        user: req.decoded._id,
+        pharmacy: pharma._id,
+        name,
+        quantity,
+        price,
+        nafdac_number,
+      });
+      const savedInventory = await inventory.save();
+      return res.status(201).json({
+        message: "Inventory has been added successfully",
+        savedInventory,
+      });
+    } catch (error) {
+      res.status(500).send({
+        message: error.message,
+      });
+    }
+  }
+
   static async uploadInventory(req, res) {
     try {
       // eslint-disable-next-line eqeqeq
@@ -12,7 +54,6 @@ export default class inventoryController {
       const path = `uploads/${req.file.filename}`;
 
       const rows = await readXlsxFile(path, { Inventory });
-      console.log("rows", rows);
 
       // skip header
       rows.shift();
@@ -26,7 +67,6 @@ export default class inventoryController {
           price: row[2],
           nafdac_number: row[3],
         };
-        console.log("inventory", inventory);
         inventories.push(inventory);
       });
 
@@ -44,24 +84,35 @@ export default class inventoryController {
 
   static async getInventory(req, res) {
     try {
-      let { name, page, limit } = req.query;
+      let { search, page, limit } = req.query;
       page = page < 1 ? 1 : page;
       limit = 5;
-      const search = name
-        ? { name: { $regex: new RegExp(name), $options: "i" } }
-        : {};
-      console.log("search", search);
-      const count = await Inventory.countDocuments();
+
+      // Multiple search query
+      const searchQueries = {
+        $or: [
+          {
+            name: { $regex: new RegExp(search), $options: "i" },
+          },
+          {
+            nafdac_number: { $regex: new RegExp(search), $options: "i" },
+          },
+        ],
+      };
+
+      let querySearch = search ? searchQueries : {};
+
+      const count = await Inventory.countDocuments(querySearch);
       const totalPages = Math.ceil(count / limit);
       page = page > totalPages ? totalPages : page;
-      const inventories = await Inventory.find(search, {})
+      const inventories = await Inventory.find(querySearch, {})
         .populate({
           path: "user",
           select: "username email phone_number",
         })
         .populate({
           path: "pharmacy",
-          select: "company_name  company_address",
+          select: "contact_person pharmacy_address  description",
         })
         .limit(limit * 1)
         .skip((page - 1) * limit)
@@ -72,14 +123,13 @@ export default class inventoryController {
         return res.status(404).send("Inventory not found!");
       }
       return res.send({
-        message: "Inventory retrieved succesfully...",
+        message: "Inventory retrieved successfully...",
         inventories,
         totalPages,
         currentPage: page,
         totalInventories: count,
       });
     } catch (error) {
-      console.log("error", error);
       next(error);
     }
   }
