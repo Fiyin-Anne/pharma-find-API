@@ -8,30 +8,27 @@ const PharmacyProfileSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    company_name: {
+    contact_person: {
       type: String,
       required: true,
       unique: true,
     },
-    company_email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    company_address: {
-      type: String,
-    },
-    company_phone_number: {
+    pharmacy_address: {
       type: String,
       required: true,
     },
-    image: {
+    license_number: {
       type: String,
+      required: true,
     },
-    verified: {
-      type: Boolean,
-      default: false,
+    description: {
+      type: String,
+      required: true,
     },
+    // verified: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
   { timestamps: true }
 );

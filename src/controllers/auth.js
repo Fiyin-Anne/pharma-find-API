@@ -128,13 +128,11 @@ export default class Auth {
       }
 
       const token = await jwtHelper.generateToken(existingUser);
-      return res
-        .status(200)
-        .json({
-          status: 200,
-          message: `Hello ${existingUser.username}, welcome!`,
-          token,
-        });
+      return res.status(200).json({
+        status: 200,
+        message: `Hello ${existingUser.username}, welcome!`,
+        token,
+      });
     } catch (error) {
       res.status(500).json({ status: 500, error: error.message });
     }
@@ -232,6 +230,18 @@ export default class Auth {
       await user.save();
       return res.status(200).json({
         message: "Password Changed!! Login Now",
+      });
+    } catch (error) {
+      res.status(500).json({ status: 500, error: error.message });
+    }
+  }
+
+  static async logout(req, res) {
+    try {
+      await User.findOneAndUpdate({ id: req.decoded._id }, { token: "" });
+      res.status(200).json({
+        status: true,
+        message: "log out successfully",
       });
     } catch (error) {
       res.status(500).json({ status: 500, error: error.message });
