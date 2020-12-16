@@ -22,7 +22,6 @@ export default class inventoryController {
         });
       }
       const pharma = await PharmacyProfile.findOne({ user: req.decoded._id });
-      console.log("pharma", pharma);
 
       const inventory = await new Inventory({
         user: req.decoded._id,

@@ -8,7 +8,7 @@ const { verifyToken } = Authentication;
 const { uploadInventory, addInventory, getInventory } = inventoryController;
 const router = express.Router();
 
-router.post("/inventory/excel", upload.single("file"), uploadInventory);
+router.post("/inventory/excel", verifyToken, upload.single("file"), uploadInventory);
 router.post("/inventory", verifyToken, addInventory);
 router.get("/inventory", getInventory);
 
