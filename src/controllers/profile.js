@@ -21,7 +21,9 @@ export default class pharmaProfile {
         description,
       } = req.body;
       const profile = await PharmacyProfile.findOneAndUpdate(
-        _id,
+        {
+          _id,
+        },
 
         {
           $set: {
@@ -63,7 +65,9 @@ export default class pharmaProfile {
 
       const { email, phone_number } = req.body;
       const profile = await User.findOneAndUpdate(
-        _id,
+        {
+          _id,
+        },
 
         {
           $set: {

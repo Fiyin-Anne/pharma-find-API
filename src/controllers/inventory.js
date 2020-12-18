@@ -4,7 +4,6 @@ import PharmacyProfile from "../models/pharmacy_profile";
 
 export default class inventoryController {
   static async addInventory(req, res) {
-    console.log(req.decoded);
     try {
       // eslint-disable-next-line object-curly-newline
       const { name, quantity, price, nafdac_number } = req.body;
@@ -22,7 +21,6 @@ export default class inventoryController {
         });
       }
       const pharma = await PharmacyProfile.findOne({ user: req.decoded._id });
-      console.log("pharma", pharma);
 
       const inventory = await new Inventory({
         user: req.decoded._id,
